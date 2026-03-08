@@ -20,11 +20,11 @@ from pdb import set_trace as stx
 
 parser = argparse.ArgumentParser(description='Gaussian Color Denoising using Restormer')
 
-parser.add_argument('--input_dir', default='./Datasets/test/', type=str, help='Directory of validation images')
+parser.add_argument('--input_dir', default='/root/Restormer/demo/input/', type=str, help='Directory of validation images')
 parser.add_argument('--result_dir', default='./results/Gaussian_Color_Denoising/', type=str, help='Directory for results')
 parser.add_argument('--weights', default='./pretrained_models/gaussian_color_denoising', type=str, help='Path to weights')
-parser.add_argument('--model_type', required=True, choices=['non_blind','blind'], type=str, help='blind: single model to handle various noise levels. non_blind: separate model for each noise level.')
-parser.add_argument('--sigmas', default='15,25,50', type=str, help='Sigma values')
+parser.add_argument('--model_type', default='non_blind', choices=['non_blind','blind'], type=str, help='non_blind: fixed sigma, blind: variable sigma')
+parser.add_argument('--sigma', default='50', type=str, help='Sigma values')
 
 args = parser.parse_args()
 
@@ -73,6 +73,19 @@ for sigma_test in sigmas:
         result_dir_tmp = os.path.join(args.result_dir, args.model_type, dataset, str(sigma_test))
         os.makedirs(result_dir_tmp, exist_ok=True)
 
+    #添加开始（本人加的）
+    if args.model_type == 'non_blind' and args.sigma == '50':
+        print("使用 sigma50 专用模型")
+    # 如果脚本支持 --weights 参数，可以在这里重新指定
+    if hasattr(args, 'weights') and args.weights:
+        weights_path = args.weights
+    else:
+        weights_path = '/root/Restormer/pretrained_models/gaussian_color_denoising_sigma50.pth'
+        print(f"强制使用模型: {weights_path}")
+        # 重新加载模型（如果需要）
+        checkpoint = torch.load(weights_path)
+        model_restoration.load_state_dict(checkpoint['params'] if 'params' in checkpoint else checkpoint)
+    #添加结束
         with torch.no_grad():
             for file_ in tqdm(files):
                 torch.cuda.ipc_collect()
