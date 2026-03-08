@@ -32,7 +32,7 @@ args = parser.parse_args()
 if args.model_type == 'blind':
     yaml_file = 'Options/GaussianColorDenoising_Restormer.yml'
 else:
-    yaml_file = f'Options/GaussianColorDenoising_RestormerSigma{args.sigmas}.yml'
+    yaml_file = f'Options/GaussianColorDenoising_RestormerSigma{args.sigma}.yml'
 import yaml
 
 try:
