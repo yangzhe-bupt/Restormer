@@ -58,6 +58,9 @@ for sigma_test in sigmas:
         weights = args.weights+'_blind.pth'
     else:
         weights = args.weights + '_sigma' + str(sigma_test) +'.pth'
+    # 强制使用正确的模型路径
+    weights = '/root/autodl-tmp/Restormer/pretrained_models/gaussian_color_denoising_sigma50.pth'
+    print(f'加载模型: {weights}')
     checkpoint = torch.load(weights)
     model_restoration.load_state_dict(checkpoint['params'])
 
