@@ -45,7 +45,7 @@ x = yaml.load(open(yaml_file, mode='r'), Loader=Loader)
 s = x['network_g'].pop('type')
 ##########################
 
-sigmas = np.int_(args.sigmas.split(','))
+sigmas = [int(args.sigma)]
 
 factor = 8
 
