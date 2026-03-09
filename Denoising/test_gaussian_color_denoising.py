@@ -49,7 +49,11 @@ sigmas = [int(args.sigma)]
 
 factor = 8
 
-datasets = ['CBSD68', 'Kodak', 'McMaster','Urban100']
+# 自定义数据集路径
+datasets = [
+    '/root/autodl-tmp/datasets/valid/DIV2K_valid_HR',
+    '/root/autodl-tmp/datasets/valid/LSDIR_valid_HR'
+]
 
 for sigma_test in sigmas:
     print("Compute results for noise level",sigma_test)
