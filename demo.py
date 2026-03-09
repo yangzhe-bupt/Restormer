@@ -34,6 +34,9 @@ parser.add_argument('--task', required=True, type=str, help='Task to run', choic
                                                                                     'Gaussian_Color_Denoising'])
 parser.add_argument('--tile', type=int, default=None, help='Tile size (e.g 720). None means testing on the original resolution image')
 parser.add_argument('--tile_overlap', type=int, default=32, help='Overlapping of different tiles')
+# 添加自动加噪参数
+parser.add_argument('--add_noise', action='store_true', default=True, help='是否自动添加噪声（默认开启）')
+parser.add_argument('--noise_sigma', type=int, default=50, help='噪声强度，默认50')
 
 args = parser.parse_args()
 
@@ -119,6 +122,11 @@ with torch.no_grad():
 
         input_ = torch.from_numpy(img).float().div(255.).permute(2,0,1).unsqueeze(0).to(device)
 
+        # 自动加噪（默认开启）
+        if args.add_noise:
+            print(f'  自动添加 sigma={args.noise_sigma} 噪声')
+            noise = torch.randn_like(input_) * (args.noise_sigma/255.0)
+            input_ = torch.clamp(input_ + noise, 0, 1)
         # Pad the input if not_multiple_of 8
         height,width = input_.shape[2], input_.shape[3]
         H,W = ((height+img_multiple_of)//img_multiple_of)*img_multiple_of, ((width+img_multiple_of)//img_multiple_of)*img_multiple_of
